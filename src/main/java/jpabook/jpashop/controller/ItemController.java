@@ -73,6 +73,7 @@ public class ItemController {
 //        book.setAuthor(form.getAuthor());
 //        book.setIsbn(form.getIsbn());
 
+        //더 좋은 설계방법
         itemService.updateItem(itemId, form.getName(), form.getPrice(), form.getStockQuantity());
         return "redirect:/items";
     }
