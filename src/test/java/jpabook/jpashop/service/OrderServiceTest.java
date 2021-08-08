@@ -30,7 +30,7 @@ class OrderServiceTest {
     OrderRepository orderRepository;
 
     @Test
-    public void 상품주문() throws Exception {
+    void 상품주문() throws Exception {
         //given
         Member member = createMember();
 
@@ -42,14 +42,18 @@ class OrderServiceTest {
 
         //then
         Order getOrder = orderRepository.findOne(orderId);
+        //상품 주문시 상태는 order
         assertThat(getOrder.getStatus()).isEqualTo(OrderStatus.ORDER);
+        //주문한 상품 종류 수가 정확해야 한다.
         assertThat(1).isEqualTo(getOrder.getOrderItems().size());
+        //주문 가겨은 가격 * 수량이다.
         assertThat(10000 * orderCount).isEqualTo(getOrder.getTotalPrice());
+        //주문 수량 만큼 재고가 줄어야 한다.
         assertThat(8).isEqualTo(book.getStockQuantity());
     }
 
     @Test
-    public void 상품주문_재고수량초과() throws Exception {
+    void 상품주문_재고수량초과() throws Exception {
         //given
         Member member = createMember();
         Item item = createBook("시골 JPA", 10000, 10);
@@ -68,7 +72,7 @@ class OrderServiceTest {
     }
 
     @Test
-    public void 주문취소() throws Exception {
+    void 주문취소() throws Exception {
         //given
         Member member = createMember();
         Book item = createBook("시골 JPA", 10000, 10);
@@ -82,7 +86,9 @@ class OrderServiceTest {
         //then
         Order getOrder = orderRepository.findOne(orderId);
 
+        //주문 취소 시 상태는 CANCEL 이다.
         assertThat(OrderStatus.CANCEL).isEqualTo(getOrder.getStatus());
+        //주문이 취소 된 상품은 그만큼 재고가 원복되어야 한다.
         assertThat(10).isEqualTo(item.getStockQuantity());
     }
 

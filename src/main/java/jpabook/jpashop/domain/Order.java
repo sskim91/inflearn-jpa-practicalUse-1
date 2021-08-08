@@ -57,6 +57,8 @@ public class Order {
     }
 
     //==생성 메서드==//
+    //밖에서 setXXX setXXX의 방식으로 생성하는게 아니라 생성할때 부터 createOrder 호출 여기서 완결을 시켜버림.
+    //주문을 생성하는 로직 관련을 보려면 여기만 보면 된다.
     public static Order createOrder(Member member, Delivery delivery, OrderItem... orderItems) {
         Order order = new Order();
         order.setMember(member);
