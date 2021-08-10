@@ -5,6 +5,7 @@ import jpabook.jpashop.service.MemberService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,6 +47,19 @@ public class MemberApiController {
     }
 
     /**
+     * 수정 API
+     * 커멘드와 쿼리를 분리하는 것은 단순히 효율성을 넘어, 코드를 유지보수 하기 쉽게 만드는 방법중 하나
+     * 변경을 하는 메서드와 단순히 조회를 하는 메서드를 아주 명확하게 분리해버리면, 변경 코드는 변경에만 집중하고, 조회 코드는 조회에만 집중할 수 있습니다.
+     */
+    @PostMapping("/api/v2/members/{id}")
+    public UpdateMemberResponse updateMemberV2(@PathVariable Long id,
+                                               @RequestBody @Valid UpdateMemberRequest request) {
+        memberService.update(id, request.getName());
+        Member findMember = memberService.findOne(id);
+        return new UpdateMemberResponse(findMember.getId(), findMember.getName());
+    }
+
+    /**
      * 이너클래스 사용하는 이유?
      * 이너 클래스는 이너 클래스를 포함하는 클래스 안에서만 한정적으로 접근할 때만 사용합니다.
      * 만약 여러 클래스에서 접근해야 하면 외부 클래스로 사용하는 것이 맞습니다^^
@@ -72,4 +86,18 @@ public class MemberApiController {
     static class CreateMemberResponse {
         private Long id;
     }
+
+    @Data
+    static class UpdateMemberRequest {
+        private String name;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class UpdateMemberResponse {
+        private Long id;
+        private String name;
+    }
+
+
 }
