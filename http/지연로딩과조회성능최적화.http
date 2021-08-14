@@ -6,3 +6,6 @@ GET http://localhost:8080/api/v2/simple-orders
 
 ### 간단한 주문 조회 V3: 엔티티를 DTO로 변환 - 페치 조인 최적화
 GET http://localhost:8080/api/v3/simple-orders
+
+### 간단한 주문 조회 V4: 엔티티를 DTO로 변환 - JPA에서 DTO로 바로 조회
+GET http://localhost:8080/api/v4/simple-orders
