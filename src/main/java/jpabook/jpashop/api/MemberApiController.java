@@ -5,13 +5,12 @@ import jpabook.jpashop.service.MemberService;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author sskim
@@ -23,6 +22,44 @@ public class MemberApiController {
     private final MemberService memberService;
 
     /**
+     * 조회 V1: 응답 값으로 엔티티를 직접 외부에 노출한다.
+     * 문제점 * - 엔티티에 프레젠테이션 계층을 위한 로직이 추가된다.
+     * - 기본적으로 엔티티의 모든 값이 노출된다.
+     * - 응답 스펙을 맞추기 위해 로직이 추가된다. (@JsonIgnore, 별도의 뷰 로직 등등) * - 실무에서는 같은 엔티티에 대해 API가 용도에 따라 다양하게 만들어지는데, 한 엔티티에 각각의 API를 위한 프레젠테이션 응답 로직을 담기는 어렵다.
+     * - 엔티티가 변경되면 API 스펙이 변한다.
+     * - 추가로 컬렉션을 직접 반환하면 항후 API 스펙을 변경하기 어렵다.(별도의 Result 클래스 생성으로 해결) * 결론 * - API 응답 스펙에 맞추어 별도의 DTO를 반환한다.
+     */
+    //조회 V1: 안 좋은 버전, 모든 엔티티가 노출, @JsonIgnore -> 이건 정말 최악, api가 이거 하나인가! 화면에 종속적이지 마라!
+    @GetMapping("/api/v1/members")
+    public List<Member> membersV1() {
+        return memberService.findMembers();
+    }
+
+    @GetMapping("/api/v2/members")
+    public Result memberV2() {
+        List<Member> findMembers = memberService.findMembers();
+        //엔티티 -> DTO 변환
+        List<MemberDto> collect = findMembers.stream()
+                .map(m -> new MemberDto(m.getName()))
+                .collect(Collectors.toList());
+
+        return new Result(collect.size(), collect);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Result<T> {
+        private int count;
+        private T data;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class MemberDto {
+        private String name;
+    }
+
+    /**
      * 등록 V1: 요청 값으로 Member 엔티티를 직접 받는다.
      * 문제점 * - 엔티티에 프레젠테이션 계층을 위한 로직이 추가된다.
      * - 엔티티에 API 검증을 위한 로직이 들어간다. (@NotEmpty 등등) * - 실무에서는 회원 엔티티를 위한 API가 다양하게 만들어지는데, 한 엔티티에 각각의 API를 위한 모든 요청 요구사항을 담기는 어렵다.
@@ -31,6 +68,7 @@ public class MemberApiController {
      */
     @PostMapping("/api/v1/members")
     public CreateMemberResponse saveMemberV1(@RequestBody @Valid Member member) {
+
         Long id = memberService.join(member);
         return new CreateMemberResponse(id);
     }
@@ -64,8 +102,8 @@ public class MemberApiController {
      * 이너 클래스는 이너 클래스를 포함하는 클래스 안에서만 한정적으로 접근할 때만 사용합니다.
      * 만약 여러 클래스에서 접근해야 하면 외부 클래스로 사용하는 것이 맞습니다^^
      * 이너클래스의 이점
-     *  - 해당 클래스 안에서만 한정적으로 사용한다는 의미 부여
-     *  - 개발자 입장에서 신경써야하는 외부 클래들이 줄어드는 효과
+     * - 해당 클래스 안에서만 한정적으로 사용한다는 의미 부여
+     * - 개발자 입장에서 신경써야하는 외부 클래들이 줄어드는 효과
      */
     @Data
     static class CreateMemberRequest {
