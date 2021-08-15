@@ -19,7 +19,7 @@ public class JpashopApplication {
         //이 옵션을 키면 order -> member, member -> orders
         //양방향 연관관계를 계속 로딩하게 된다. 따라서
         //@JsonIgnore 옵션을 한곳에 주어야 한다.
-        hibernate5Module.configure(Hibernate5Module.Feature.FORCE_LAZY_LOADING, true);
+        //hibernate5Module.configure(Hibernate5Module.Feature.FORCE_LAZY_LOADING, true);
         return hibernate5Module;
     }
 }
