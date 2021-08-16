@@ -47,8 +47,17 @@ public class OrderApiController {
         return collect;
     }
 
+    @GetMapping("/api/v3/orders")
+    public List<OrderDto> ordersV3() {
+        List<Order> orders = orderRepository.findAllWithItem();
+        List<OrderDto> result = orders.stream()
+                .map(OrderDto::new)
+                .collect(toList());
+        return result;
+    }
+
     @Getter
-    static class OrderDto{
+    static class OrderDto {
         private final Long orderId;
         private final String name;
         private final LocalDateTime orderDate;
