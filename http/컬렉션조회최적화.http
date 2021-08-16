@@ -3,3 +3,9 @@ GET http://localhost:8080/api/v1/orders
 
 ### 주문 조회 V2: 엔티티를 DTO로 변환
 GET http://localhost:8080/api/v2/orders
+
+### 주문 조회 V3: 엔티티를 DTO로 변환 - 페치 조인 최적화
+GET http://localhost:8080/api/v3/orders
+
+### 주문 조회 V3: 엔티티를 DTO로 변환 - 페이징과 한계 돌파
+GET http://localhost:8080/api/v3.1/orders?offse0=1&limit=100

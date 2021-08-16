@@ -124,4 +124,24 @@ public class OrderRepository {
                 .getResultList();
 
     }
+
+    /**
+     * ToOne(OneToOne, ManyToOne) 관계를 모두 페치조인 한다. ToOne 관계는 row수를 증가시키지 않으므로 페이징 쿼리에 영향을 주지 않는다.
+     * 컬렉션은 지연 로딩으로 조회한다.
+     * 지연 로딩 성능 최적화를 위해 hibernate.default_batch_fetch_size를 적용한다.
+     * hibernate.default_batch_fetch_size: 글로벌 설정
+     */
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+
+        String query = "select o from Order o" +
+                " join fetch o.member m " +
+                " join fetch o.delivery d";
+
+        List<Order> resultList = em.createQuery(query, Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+
+        return resultList;
+    }
 }
