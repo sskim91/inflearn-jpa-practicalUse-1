@@ -13,3 +13,6 @@ GET http://localhost:8080/api/v3.1/orders?offse0=1&limit=100
 ### 주문 조회 V4: JPA에서 DTO 직접 조회
 GET http://localhost:8080/api/v4/orders
 
+### 주문 조회 V5: JPA에서 DTO 직접 조회 - 컬렉션 조회 최적화
+GET http://localhost:8080/api/v5/orders
+
